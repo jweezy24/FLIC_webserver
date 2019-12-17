@@ -23,3 +23,13 @@ def insert_data():
     created = json.loads(request.data)['created']
     data = [key, val, node, created]
     database.insert_data(data)
+
+@app.route('/getter', methods=['POST'])
+def get_data():
+    key = json.loads(request.data)['key']
+    val = json.loads(request.data)['val']
+    node = json.loads(request.data)['node']
+    created = json.loads(request.data)['created']
+    data = [key, val, node, created]
+    got_data = database.get_data(data)
+    return got_data
