@@ -7,29 +7,38 @@ import json
 from flask import request
 from flask import jsonify
 
-database = db.database()
+#If the user would like to clear data change to True
+database = db.database(True)
 
 app = Flask(__name__)
 
-@app.route('/hello')
-def test():
-    return 'Hello, World!'
-
 @app.route('/insert', methods=['POST'])
 def insert_data():
-    key = json.loads(request.data)['key']
-    val = json.loads(request.data)['val']
-    node = json.loads(request.data)['node']
-    created = json.loads(request.data)['created']
-    data = [key, val, node, created]
+    data = json.loads(request.data)
     database.insert_data(data)
+    return 'success'
 
 @app.route('/getter', methods=['POST'])
 def get_data():
-    key = json.loads(request.data)['key']
+    print(json.loads(request.data))
     val = json.loads(request.data)['val']
-    node = json.loads(request.data)['node']
-    created = json.loads(request.data)['created']
-    data = [key, val, node, created]
-    got_data = database.get_data(data)
-    return got_data
+    got_data = database.get_data(val[0], val[1], val[3])
+    ret_val = json.dumps({'data':got_data})
+    return ret_val
+
+@app.route('/all', methods=['POST'])
+def get_all():
+    print(json.loads(request.data))
+    val = json.loads(request.data)['val']
+    got_data = database.get_all()
+    ret_val = json.dumps({'data':got_data})
+    return ret_val
+
+@app.route('/init', methods=['POST'])
+def init_data():
+    data = json.loads(request.data)
+    mac = data['mac']
+    ip = data['ip']
+    name = data['name']
+    database.init_node([mac, name, ip])
+    return 'success'

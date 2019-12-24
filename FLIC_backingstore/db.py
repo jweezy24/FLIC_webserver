@@ -5,41 +5,90 @@ import os
 import time
 
 class database:
-    def __init__(self):
+    def __init__(self,drop_data):
         self.connect_str = f"dbname='flicdb' user='flic' host='localhost' password='{os.environ['FLIC_PASS']}'"
+        if self.create_dbs() and drop_data:
+            pass
+        elif not self.create_dbs() and drop_data:
+            self.clear_dbs()
+            self.create_dbs()
+            
 
-    def create_db(self):
+    def create_dbs(self):
         try:
             # use our connection values to establish a connection
             conn = psycopg2.connect(self.connect_str)
             # create a psycopg2 cursor that can execute queries
             cursor = conn.cursor()
-            # create a new table with a single column called "name"
-            cursor.execute("""CREATE TABLE data (key integer, val double precision, node char(40), created_seconds double precision, recieved_seconds double precision, difference double precision, );""")
-            # run a SELECT statement - no data in there, but we can try it
-            cursor.execute("""SELECT * from data""")
+            # DB for main data
+            cursor.execute("""CREATE TABLE data (key integer, val double precision, node char(40), created_on_node double precision, 
+            flic_recieved_time double precision,ttl double precision, write_manager_recived_time double precision, 
+            write_manager_send_time double precision, db_write_time double precision);""")
+            
             conn.commit() # <--- makes sure the change is shown in the database
-            rows = cursor.fetchall()
-            print(rows)
+
+            #DB for basic node info
+            cursor.execute("""CREATE TABLE nodes (mac char(40), node char(40), ip char(40) );""")
+
+            conn.commit() # <--- makes sure the change is shown in the database
             cursor.close()
             conn.close()
+            return True
         except Exception as e:
             print("Password wrong or db already created.")
             print(e)
+            return False
+
+    def clear_dbs(self):
+        # use our connection values to establish a connection
+        conn = psycopg2.connect(self.connect_str)
+        # create a psycopg2 cursor that can execute queries
+        cursor = conn.cursor()
+        # create a new table with a single column called "name"
+        cursor.execute("""drop table if exists data;""")
+        conn.commit()
+        cursor.execute("""drop table if exists nodes;""")
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+    def init_node(self,data):
+        conn = psycopg2.connect(self.connect_str)
+        cursor = conn.cursor()
+        query = f"INSERT INTO nodes VALUES ('{data[0]}', '{data[1]}', '{data[2]}');"
+        cursor.execute(query)
+        conn.commit()
+        cursor.close()
+        conn.close()
 
     def insert_data(self,data):
         conn = psycopg2.connect(self.connect_str)
         cursor = conn.cursor()
-        query = f"INSERT INTO data VALUES ({data[0]}, {data[1]}, '{data[2]}', {data[3]}, {time.time()} );"
+        recieved = time.time()
+        query = f"INSERT INTO data VALUES ({data[0]}, {data[1]}, '{data[2]}', {data[3]}, {data[4]}, {data[5]}, {data[6]}, {data[7]}, {recieved});"
         cursor.execute(query)
         conn.commit()
+        cursor.close()
+        conn.close()
 
-    def get_data(self, node,key,val):
+    def get_data(self,key,val,node):
         conn = psycopg2.connect(self.connect_str)
         cursor = conn.cursor()
         query = f"SELECT * FROM data WHERE key={key} and val={val} and node='{node}';"
         cursor.execute(query)
         rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return rows
+
+    def get_all(self):
+        conn = psycopg2.connect(self.connect_str)
+        cursor = conn.cursor()
+        query = f"SELECT * FROM data;"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
         return rows
 
 if __name__ == '__main__':
