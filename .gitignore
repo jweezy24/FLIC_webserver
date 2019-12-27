@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+#Init_script ignored
+init_varaiables.sh
+
 # C extensions
 *.so
 
