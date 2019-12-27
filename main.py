@@ -42,3 +42,6 @@ def init_data():
     name = data['name']
     database.init_node([mac, name, ip])
     return 'success'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',port=7745)
