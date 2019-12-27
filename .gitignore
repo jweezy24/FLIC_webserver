@@ -5,7 +5,10 @@ __pycache__/
 
 
 #Init_script ignored
-init_varaiables.sh
+init_variables.sh
+
+#test_iter.txt ignored to avoid version confliction numbers when editing
+/FLIC_backingstore/test_iter.txt
 
 # C extensions
 *.so
