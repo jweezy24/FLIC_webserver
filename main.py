@@ -43,5 +43,10 @@ def init_data():
     database.init_node([mac, name, ip])
     return 'success'
 
+@app.route('/iterate', methods=['POST'])
+def increase_test():
+    return database.set_iter()
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=7745)
