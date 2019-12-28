@@ -8,7 +8,7 @@ from flask import request
 from flask import jsonify
 
 #If the user would like to clear data change to True
-database = db.database(True)
+database = db.database(False)
 
 app = Flask(__name__)
 
