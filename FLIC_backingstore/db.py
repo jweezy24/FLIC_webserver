@@ -51,6 +51,8 @@ class database:
         conn.commit()
         cursor.execute("""drop table if exists nodes;""")
         conn.commit()
+        with open("./FLIC_backingstore","w") as f:
+            f.write("1")
         cursor.close()
         conn.close()
 
