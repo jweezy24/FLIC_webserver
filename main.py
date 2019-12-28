@@ -28,7 +28,8 @@ def get_data():
 
 @app.route('/all', methods=['POST'])
 def get_all():
-    got_data = database.get_all()
+    num = json.loads(request.data)['test']
+    got_data = database.get_all(num)
     ret_val = json.dumps({'data':got_data})
     return ret_val
 
