@@ -30,7 +30,7 @@ class database:
             conn.commit() # <--- makes sure the change is shown in the database
 
             #DB for basic node info
-            cursor.execute("""CREATE TABLE nodes (mac char(40), node char(40), ip char(40) );""")
+            cursor.execute("""CREATE TABLE nodes (mac unique char(40), node char(40), ip char(40) );""")
 
             conn.commit() # <--- makes sure the change is shown in the database
             cursor.close()
