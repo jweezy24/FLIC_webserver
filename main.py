@@ -18,6 +18,12 @@ def insert_data():
     database.insert_data(data)
     return 'success'
 
+@app.route('/insert_read', methods=['POST'])
+def insert_data():
+    data = json.loads(request.data)
+    database.insert_data(data["data"])
+    return 'success'
+
 @app.route('/getter', methods=['POST'])
 def get_data():
     print(json.loads(request.data))

@@ -32,6 +32,9 @@ class database:
             #DB for basic node info
             cursor.execute("""CREATE TABLE nodes (mac unique char(40), node char(40), ip char(40) );""")
 
+            #DB for all reads during experiment
+            cursor.execute("""CREATE TABLE reads (node char(40), misses integer, catches iteger, trip_time double percision, test_number integer );""")
+
             conn.commit() # <--- makes sure the change is shown in the database
             cursor.close()
             conn.close()
@@ -50,6 +53,8 @@ class database:
         cursor.execute("""drop table if exists data;""")
         conn.commit()
         cursor.execute("""drop table if exists nodes;""")
+        conn.commit()
+        cursor.execute("""drop table if exists reads;""")
         conn.commit()
         with open("./FLIC_backingstore","w") as f:
             f.write("1")
@@ -70,6 +75,16 @@ class database:
         cursor = conn.cursor()
         recieved = time.time()
         query = f"INSERT INTO data VALUES ({data[0]}, {data[1]}, '{data[2]}', {data[3]}, {data[4]}, {data[5]}, {data[6]}, {data[7]}, {recieved}, {self.test_num});"
+        cursor.execute(query)
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+    def insert_read(self,data):
+        conn = psycopg2.connect(self.connect_str)
+        cursor = conn.cursor()
+        recieved = time.time()
+        query = f"INSERT INTO reads VALUES ('{data[0]}', {data[1]}, {data[2]}, {data[3]}, {self.test_num});"
         cursor.execute(query)
         conn.commit()
         cursor.close()
